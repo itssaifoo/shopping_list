@@ -1,0 +1,307 @@
+:root {
+  --color-primary: #0ca678;
+  /* Teal-green */
+  --color-primary-hover: #099268;
+  --color-bg: #f1f3f5;
+  --color-surface: #ffffff;
+  --color-text: #212529;
+  --color-subtext: #868e96;
+  --color-border: #dee2e6;
+  --color-danger: #fa5252;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --radius: 8px;
+
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  margin: 0;
+  padding: 0;
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0 0 1rem 0;
+  font-weight: 700;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-hover);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+.btn-danger {
+  color: var(--color-danger);
+  background: transparent;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 16px;
+  /* Prevent zoom on iOS */
+  margin-bottom: 10px;
+}
+
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 1rem;
+}
+
+.btn-secondary {
+  background: var(--color-border);
+  color: var(--color-text);
+}
+
+.btn-secondary:hover {
+  background: #ced4da;
+}
+
+.fade-in {
+  animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── 3-Tab Bottom Navigation ── */
+.tab-bar {
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.06);
+  z-index: 100;
+  padding: 0;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.tab-bar-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 8px 4px 10px;
+  background: none;
+  border: none;
+  border-radius: 0;
+  color: var(--color-subtext);
+  font-size: 0.7rem;
+  font-weight: 500;
+  transition: color 0.2s;
+  position: relative;
+}
+
+.tab-bar-btn.active {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.tab-bar-btn.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 25%;
+  right: 25%;
+  height: 2.5px;
+  background: var(--color-primary);
+  border-radius: 0 0 2px 2px;
+}
+
+.tab-bar-icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.tab-bar-badge {
+  position: absolute;
+  top: 4px;
+  right: calc(50% - 18px);
+  background: var(--color-primary);
+  color: white;
+  font-size: 0.6rem;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+/* Space at the bottom so content doesn't hide behind the tab bar */
+.tab-content-area {
+  padding-bottom: 80px;
+}
+
+/* ── Database Item Quick-Add ── */
+.db-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--color-border);
+  transition: background 0.15s;
+}
+
+.db-item:last-child {
+  border-bottom: none;
+}
+
+.db-item.on-list {
+  background: rgba(12, 166, 120, 0.06);
+  margin: 0 -1rem;
+  padding: 10px 1rem;
+  border-radius: 6px;
+}
+
+.db-item-check {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s;
+  cursor: pointer;
+  background: transparent;
+  padding: 0;
+  color: transparent;
+  font-size: 0.75rem;
+}
+
+.db-item.on-list .db-item-check {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: white;
+}
+
+/* Pulse animation for toggle feedback */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.25);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.pulse {
+  animation: pulse 0.25s ease-in-out;
+}
+
+/* ── Shopping History ── */
+.history-card {
+  cursor: pointer;
+  padding: 1rem !important;
+  margin-bottom: 0.75rem;
+  transition: box-shadow 0.15s;
+}
+
+.history-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.history-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.history-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.history-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.history-chip.purchased {
+  background: rgba(12, 166, 120, 0.1);
+  color: #087f5b;
+}
+
+.history-chip.missed {
+  background: rgba(250, 82, 82, 0.1);
+  color: #c92a2a;
+}
+
+.chip-aisle {
+  font-size: 0.7rem;
+  opacity: 0.7;
+  font-weight: 400;
+}
