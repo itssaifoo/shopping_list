@@ -1,25 +1,13 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 
 export default function MasterList({ items, onUpdate, onDelete }) {
     const [searchTerm, setSearchTerm] = useState('');
-    const [pulsingId, setPulsingId] = useState(null);
-    const pulseTimeout = useRef(null);
 
     const filteredItems = items.filter(item =>
         item.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const grouped = filteredItems.reduce((acc, item) => {
-        (acc[item.category] = acc[item.category] || []).push(item);
-        return acc;
-    }, {});
-
     const toggleListStatus = (item) => {
-        // Pulse animation feedback
-        if (pulseTimeout.current) clearTimeout(pulseTimeout.current);
-        setPulsingId(item.id);
-        pulseTimeout.current = setTimeout(() => setPulsingId(null), 300);
-
         onUpdate({
             ...item,
             status: (item.status === 'needed' || item.status === 'in_cart') ? 'not_needed' : 'needed'
@@ -28,86 +16,63 @@ export default function MasterList({ items, onUpdate, onDelete }) {
 
     return (
         <div className="master-list">
-            <div style={{ marginBottom: '1rem' }}>
-                <input
-                    type="text"
-                    placeholder="Search items..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
-                />
-            </div>
+            <input
+                type="text"
+                placeholder="Search inventory..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{ marginBottom: '1rem', width: '100%', padding: '8px' }}
+            />
 
-            <div style={{
-                fontSize: '0.85rem',
-                color: 'var(--color-subtext)',
-                marginBottom: '1rem',
-                textAlign: 'center'
-            }}>
-                {items.length} item{items.length !== 1 ? 's' : ''} in database
-                {searchTerm && ` · ${filteredItems.length} match${filteredItems.length !== 1 ? 'es' : ''}`}
-            </div>
-
-            {Object.entries(grouped).sort().map(([category, categoryItems]) => (
-                <div key={category} className="card" style={{ padding: '1rem', marginBottom: '1rem' }}>
-                    <h4 style={{ marginTop: 0, borderBottom: '1px solid var(--color-border)', paddingBottom: '0.5rem' }}>{category}</h4>
-                    <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                        {categoryItems.map(item => {
-                            const isOnList = item.status === 'needed' || item.status === 'in_cart';
-                            return (
-                                <li
-                                    key={item.id}
-                                    className={`db-item${isOnList ? ' on-list' : ''}`}
-                                >
-                                    <div
-                                        style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, cursor: 'pointer' }}
-                                        onClick={() => toggleListStatus(item)}
-                                    >
-                                        <button
-                                            className={`db-item-check${pulsingId === item.id ? ' pulse' : ''}`}
-                                            tabIndex={-1}
-                                            aria-label={isOnList ? 'Remove from list' : 'Add to list'}
-                                        >
-                                            {isOnList ? '✓' : ''}
-                                        </button>
-                                        <div>
-                                            <div style={{ fontWeight: 'bold' }}>{item.name}</div>
-                                            <div style={{ fontSize: '0.85em', color: 'var(--color-subtext)' }}>
-                                                Aisle: {item.aisle || 'N/A'}
-                                            </div>
-                                        </div>
-                                    </div>
-
+            <table className="inventory-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Aisle</th>
+                        <th>Category</th>
+                        <th>Price (OMR)</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {filteredItems.map(item => {
+                        const isOnList = item.status === 'needed' || item.status === 'in_cart';
+                        return (
+                            <tr key={item.id}>
+                                <td>
+                                    <div style={{ fontWeight: 500 }}>{item.name}</div>
+                                    {item.is_essential && <span style={{ fontSize: '0.7rem', color: 'gold' }}>★ Essential</span>}
+                                </td>
+                                <td>{item.aisle || '-'}</td>
+                                <td>{item.category}</td>
+                                <td>{item.price ? item.price.toFixed(3) : '-'}</td>
+                                <td>
                                     <button
-                                        onClick={() => onDelete(item.id)}
-                                        className="btn-danger"
-                                        style={{ padding: '4px 8px', flexShrink: 0 }}
-                                        aria-label="Delete"
+                                        onClick={() => toggleListStatus(item)}
+                                        className={isOnList ? 'btn-green' : 'btn-outline'}
+                                        style={{ fontSize: '0.8rem', padding: '2px 8px' }}
                                     >
-                                        ✕
+                                        {isOnList ? 'On List' : 'Add'}
                                     </button>
-                                </li>
-                            );
-                        })}
-                    </ul>
-                </div>
-            ))}
-
-            {items.length === 0 && (
-                <div style={{ textAlign: 'center', color: 'var(--color-subtext)', padding: '2rem 0' }}>
-                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📦</div>
-                    <p style={{ margin: 0 }}>No items in your database yet.</p>
-                    <p style={{ margin: '0.25rem 0 0', fontSize: '0.9rem' }}>
-                        Switch to the <strong>+</strong> tab to add your first item!
-                    </p>
-                </div>
-            )}
-
-            {items.length > 0 && filteredItems.length === 0 && (
-                <p style={{ textAlign: 'center', color: 'var(--color-subtext)' }}>
-                    No items match "{searchTerm}"
-                </p>
-            )}
+                                </td>
+                                <td>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onDelete(item.id);
+                                        }}
+                                        className="btn-danger"
+                                        style={{ padding: '2px 5px' }}
+                                    >
+                                        ×
+                                    </button>
+                                </td>
+                            </tr>
+                        )
+                    })}
+                </tbody>
+            </table>
         </div>
     );
 }
